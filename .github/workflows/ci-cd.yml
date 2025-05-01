@@ -1,0 +1,61 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: List all files in the repo
+      run: |
+        ls -R
+
+    - name: List files in frontend directory
+      run: |
+        ls -l ./MyProject1/frontend/cheaptripapp
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Cache Docker layers
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build auth-service Docker image
+      run: |
+        docker build -t auth-service-image ./MyProject1/backend/auth-service
+
+    - name: Build frontend Docker image
+      run: |
+        docker build -t frontend-image ./MyProject1/frontend/cheaptripapp
+
+    # Optional: Push Docker images to Docker Hub
+    - name: Login to Docker Hub
+      if: github.ref == 'refs/heads/main'
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push images
+      if: github.ref == 'refs/heads/main'
+      run: |
+        docker tag auth-service-image ${{ secrets.DOCKER_USERNAME }}/auth-service-image:latest
+        docker tag frontend-image ${{ secrets.DOCKER_USERNAME }}/frontend-image:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/auth-service-image:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/frontend-image:latest
+
+    # Optional: Deploy step
+    - name: Deploy
+      run: |
+        echo "Deploy code to server here..."

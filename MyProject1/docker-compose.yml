@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  auth-service:
+    build:
+      context: ./backend/auth-service
+    container_name: auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/CheapTripDB
+      - JWT_SECRET=your_secret_key
+      - PORT=3001
+    depends_on:
+      - mongo
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend/cheaptripapp
+    container_name: frontend
+    ports:
+      - "8080:80"  # 8080 local => 80 in container (Nginx)
+    depends_on:
+      - auth-service
+    restart: always
+
+volumes:
+  mongo-data:
