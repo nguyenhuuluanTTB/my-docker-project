@@ -32,14 +32,13 @@ jobs:
 
     - name: Build frontend Docker image
       run: |
-        docker build -t frontend-image MyProject1/frontend/cheaptripapp
+        docker build -t frontend-image ./MyProject1/frontend/cheaptripapp
 
-    # Optional: Push Docker images to Docker Hub
     - name: Login to Docker Hub
       if: github.ref == 'refs/heads/main'
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Push images
+    - name: Push Docker images
       if: github.ref == 'refs/heads/main'
       run: |
         docker tag auth-service-image ${{ secrets.DOCKER_USERNAME }}/auth-service-image:latest
@@ -47,7 +46,6 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/auth-service-image:latest
         docker push ${{ secrets.DOCKER_USERNAME }}/frontend-image:latest
 
-    # Optional: Deploy step
     - name: Deploy
       run: |
-        echo "Deploy code to server here..."
+        echo "Bạn có thể thêm lệnh SSH để deploy hoặc chạy docker-compose ở server tại đây"
