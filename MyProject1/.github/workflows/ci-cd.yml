@@ -28,9 +28,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildx-
 
-    - name: Build Docker image
+    # Build Docker image cho backend (auth-service)
+    - name: Build Docker image for auth-service
       run: |
-        docker build -t your-docker-image-name .  # Build Docker image từ Dockerfile
+        docker build -t your-docker-image-name ./backend/auth-service  # Đường dẫn tới Dockerfile của auth-service
+
+    # Nếu bạn cũng có Dockerfile cho frontend, bạn cần thêm bước này
+    # - name: Build Docker image for frontend
+    #   run: |
+    #     docker build -t frontend-docker-image-name ./frontend/cheaptripapp  # Đường dẫn tới Dockerfile của frontend
 
     - name: Push Docker image to Docker Hub (optional)
       if: github.ref == 'refs/heads/main'  # Chạy bước này chỉ khi push vào nhánh main
