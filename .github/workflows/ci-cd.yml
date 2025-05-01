@@ -32,10 +32,7 @@ jobs:
 
     - name: Build frontend Docker image
       run: |
-        ls -l ./frontend  # Kiểm tra thư mục frontend có tồn tại không
-        ls -l ./frontend/cheaptripapp  # Kiểm tra thư mục cheaptripapp có tồn tại không
-        docker build -t frontend-image ./frontend/cheaptripapp
-
+        docker build -t frontend-image .MyProject1/frontend/cheaptripapp
 
     - name: Login to Docker Hub
       if: github.ref == 'refs/heads/main'
