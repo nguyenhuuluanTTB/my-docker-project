@@ -32,7 +32,7 @@ jobs:
 
     - name: Build frontend Docker image
       run: |
-        docker build -t frontend-image .MyProject1/frontend/cheaptripapp
+        docker build -t frontend-image ./MyProject1/frontend/cheaptripapp
 
     - name: Login to Docker Hub
       if: github.ref == 'refs/heads/main'
